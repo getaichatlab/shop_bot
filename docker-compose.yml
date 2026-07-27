@@ -1,0 +1,33 @@
+services:
+  bot:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_PATH: /data/shop.db
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - bot_data:/data
+      - ./logs:/app/logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    # Uncomment when running in webhook mode:
+    # ports:
+    #   - "8080:8080"
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  bot_data:
+  redis_data:

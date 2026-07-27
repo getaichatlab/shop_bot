@@ -1,0 +1,20 @@
+# Normalise line endings so a clone on Linux does not look like every file
+# changed. Text is stored as LF in the repository and checked out natively.
+* text=auto eol=lf
+
+# Windows-only files keep CRLF.
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf
+
+# Shell scripts must stay LF or they will not run.
+*.sh   text eol=lf
+
+# Binary — never touch.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.db   binary
+*.gz   binary

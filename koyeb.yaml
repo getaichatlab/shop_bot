@@ -1,0 +1,56 @@
+# Koyeb deployment.
+#
+# Koyeb's free instance does not sleep, which matters for a Telegram bot: a
+# sleeping app misses the first message and looks broken to whoever is
+# evaluating it.
+#
+# Deploy from the dashboard, or:
+#   koyeb app init shop-bot --docker . --ports 8080:http --routes /:8080
+#
+# The free instance has an EPHEMERAL filesystem: the SQLite file is recreated on
+# every redeploy. For a portfolio demo that is fine — the seed catalog comes
+# back automatically. For real data, attach a volume or move to Postgres.
+
+app: shop-bot
+
+services:
+  - name: bot
+    type: web
+    instance_type: free
+    regions:
+      - fra          # Frankfurt: closest free region to Uzbekistan
+
+    ports:
+      - port: 8080
+        protocol: http
+
+    routes:
+      - path: /
+        port: 8080
+
+    health_checks:
+      - path: /health
+        port: 8080
+        protocol: http
+        grace_period: 30
+
+    env:
+      # Webhook mode: a web service must answer HTTP, and webhooks avoid the
+      # long-poll connection that free tiers tend to cut.
+      - key: USE_WEBHOOK
+        value: "true"
+      - key: PORT
+        value: "8080"
+      - key: DEFAULT_LANG
+        value: "ru"
+      - key: DEFAULT_CURRENCY
+        value: "UZS"
+      - key: PAYMENT_MODE
+        value: "demo"
+      - key: FSM_STORAGE
+        value: "sqlite"
+      - key: LOG_LEVEL
+        value: "INFO"
+
+      # Set these as SECRETS in the Koyeb dashboard, never here:
+      #   BOT_TOKEN, ADMIN_IDS, WEBHOOK_SECRET, WEBHOOK_BASE_URL
