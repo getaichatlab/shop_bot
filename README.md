@@ -10,7 +10,7 @@ methods and a full admin panel — in **Russian and Uzbek**, priced in **so'm,
 rubles or dollars**.
 
 Built with **aiogram 3.x** (fully async) and **SQLite**. Runs in polling or
-webhook mode without a single code change. **294 tests.**
+webhook mode without a single code change. **301 tests.**
 
 > **Live demo:** [@your_bot](https://t.me/your_bot) — running in demo mode; the
 > payment requisites shown are placeholders and the bot says so on screen.
@@ -106,7 +106,7 @@ shop_bot/
 │   ├── admin.py            # reusable IsAdmin filter
 │   └── buttons.py          # matches a button in any language
 ├── scripts/backup.sh       # automated SQLite backup
-└── tests/                  # 294 tests (unit, locale, currency, payments, safety, e2e)
+└── tests/                  # 301 tests (unit, locale, currency, payments, safety, e2e)
 ```
 
 **Design rule:** handlers hold business logic, SQL lives only in

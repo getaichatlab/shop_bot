@@ -16,6 +16,7 @@ from aiogram.types import InlineKeyboardMarkup
 from config import settings
 from utils.formatters import split_message
 from utils.logger import redact_secrets
+from utils.timing import NEVER
 
 log = logging.getLogger(__name__)
 
@@ -110,7 +111,9 @@ async def alert_admins(bot: Bot, key: str, text: str) -> None:
     (a failed API call includes the URL), and that must never reach a chat.
     """
     now = time.monotonic()
-    last = _last_alert.get(key, 0.0)
+    # NEVER, not 0.0: on a machine that booted a minute ago, 0.0 would read as
+    # "alerted just now" and the very first alert would be swallowed.
+    last = _last_alert.get(key, NEVER)
     if now - last < settings.admin_error_cooldown:
         return
     _last_alert[key] = now

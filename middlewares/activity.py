@@ -14,6 +14,7 @@ from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 
 from database import db
+from utils.timing import NEVER
 
 log = logging.getLogger(__name__)
 
@@ -33,7 +34,9 @@ class ActivityMiddleware(BaseMiddleware):
         user = data.get("event_from_user")
         if user is not None:
             now = time.monotonic()
-            if now - self._touched.get(user.id, 0.0) > TOUCH_INTERVAL:
+            # NEVER, not 0.0 — otherwise nobody is recorded as seen during the
+            # first five minutes of uptime.
+            if now - self._touched.get(user.id, NEVER) > TOUCH_INTERVAL:
                 self._touched[user.id] = now
                 try:
                     await db.touch_user(user.id)

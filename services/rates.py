@@ -18,6 +18,7 @@ import aiohttp
 
 from currencies import BASE_CURRENCY, CURRENCIES
 from database import db
+from utils.timing import NEVER
 
 log = logging.getLogger(__name__)
 
@@ -40,11 +41,19 @@ class RateProvider:
 
     def __init__(self) -> None:
         self._rates: dict[str, float] = {}
-        self._loaded_at: float = 0.0
+        self._loaded_at: float = NEVER
         self._lock = asyncio.Lock()
 
     def invalidate(self) -> None:
-        self._loaded_at = 0.0
+        """Force the next read to go to the database.
+
+        Both fields are reset. Clearing `_loaded_at` alone would be enough on a
+        long-running machine, but not on one that booted seconds ago — see
+        `utils.timing.NEVER`. Dropping the values as well makes the intent
+        impossible to misread.
+        """
+        self._rates = {}
+        self._loaded_at = NEVER
 
     async def all(self) -> dict[str, float]:
         now = time.monotonic()

@@ -4,6 +4,36 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.5.1] — 2026-07-27
+
+### Fixed
+
+- **A freshly booted machine suppressed its own first events.** `time.monotonic()`
+  counts from boot, so on a server that just came up it returns a small number.
+  Four places used `0.0` as the "this has never happened" default, which then
+  read as *"it happened a moment ago"* and skipped the action:
+  - `utils/notifier.alert_admins` — the **first admin alert after a deploy was
+    silently dropped**, which is the alert that matters most;
+  - `services.rates.RateProvider.invalidate()` — the cache was not actually
+    invalidated, so a stale exchange rate kept being served;
+  - `middlewares/activity` — nobody was recorded in `last_seen` for the first
+    five minutes of uptime;
+  - `middlewares/throttling` — a first-ever message could be rate-limited.
+
+  All four now use `utils.timing.NEVER` (`-inf`), which is older than any
+  monotonic reading on any machine.
+
+  Found by CI: GitHub runners boot seconds before the suite starts, so they
+  exposed what a developer machine with days of uptime never could.
+
+### Added
+
+- `utils/timing.py` — the `NEVER` sentinel and the reasoning behind it.
+- `tests/test_fresh_boot.py` — seven tests that pin the clock to a just-booted
+  machine. Reverting any of the four fixes fails five of them.
+
+---
+
 ## [1.5.0] — 2026-07-26
 
 Prepared for a **public** GitHub repository and a publicly reachable demo.

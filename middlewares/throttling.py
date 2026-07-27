@@ -16,6 +16,7 @@ from aiogram.types import CallbackQuery, Message, TelegramObject
 from config import settings
 from filters.admin import is_admin
 from locales import get_texts
+from utils.timing import NEVER
 
 log = logging.getLogger(__name__)
 
@@ -51,10 +52,11 @@ class ThrottlingMiddleware(BaseMiddleware):
         now = time.monotonic()
         self._cleanup(now)
 
-        last = self._last_seen.get(user.id, 0.0)
+        # NEVER, not 0.0 — a first-time user must never look "seen just now".
+        last = self._last_seen.get(user.id, NEVER)
         if now - last < self.rate:
             # Warn at most once every 3 seconds so we don't spam back.
-            if now - self._warned.get(user.id, 0.0) > 3:
+            if now - self._warned.get(user.id, NEVER) > 3:
                 self._warned[user.id] = now
                 # This middleware runs before i18n, so resolve the locale from
                 # the Telegram client language with the configured fallback.
