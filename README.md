@@ -1,6 +1,6 @@
 # 🛍 Telegram Shop Bot
 
-[![tests](https://github.com/USERNAME/shop_bot/actions/workflows/tests.yml/badge.svg)](https://github.com/USERNAME/shop_bot/actions/workflows/tests.yml)
+[![tests](https://github.com/getaichatlab/shop_bot/actions/workflows/tests.yml/badge.svg)](https://github.com/getaichatlab/shop_bot/actions/workflows/tests.yml)
 [![python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)](https://www.python.org/)
 [![aiogram](https://img.shields.io/badge/aiogram-3.15-blue)](https://docs.aiogram.dev/)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -15,7 +15,7 @@ webhook mode without a single code change. **294 tests.**
 > **Live demo:** [@your_bot](https://t.me/your_bot) — running in demo mode; the
 > payment requisites shown are placeholders and the bot says so on screen.
 
-<!-- Replace USERNAME and @your_bot above after the first push. -->
+<!-- Replace @your_bot above with the real bot username after deploying. -->
 
 ---
 
